@@ -72,10 +72,9 @@ jobs:
       - name: "Commit"
         if: ${{steps.diff-check.outputs.has-diff}}
         run: |
-
           git config --global user.name "rajyan"
           git config --global user.email "kitakita7617@gmail.com"
           git add .
-          git commit -m "Added coverage for ${{ steps.short-sha.outputs.sha }}"
+          git commit -m "Added coverage for ${{ github.server_url }}/${{ github.repository }}/commit/${{ steps.short-sha.outputs.sha }}"
           lucky_commit ${{ steps.short-sha.outputs.sha }}
           git push
