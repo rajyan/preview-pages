@@ -19,13 +19,13 @@ jobs:
           fetch-depth: 0
 
       - name: "Run something"
-        working-directory: pr-${{github.event.pull_request.number}}
+        working-directory: ${{ github.event.after }}
         run: "touch test.md"
 
       - uses: actions/upload-artifact@v3
         with:
           name: pages
-          path: pr-${{github.event.pull_request.number}}/test.md
+          path: ${{ github.event.after }}/test.md
 
   commit:
     name: "Commit"
@@ -65,5 +65,5 @@ jobs:
           git config --global user.email "kitakita7617@gmail.com"
           git add .
           git commit -m "Added coverage for ${{ github.event.after }}"
-          lucky_commit ${{ needs.run.short-sha.outputs.sha }}
+          lucky_commit $(echo ${{ github.event.after }} | cut -c 1-7)
           git push
