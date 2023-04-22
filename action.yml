@@ -58,7 +58,7 @@ runs:
       id: diff-check
       working-directory: preview-pages
       run: |
-        mv ${{ github.workspace }}/${{ inputs.path }} .
+        mv ${{ github.workspace }}/${{ inputs.path }} ${{ steps.upload-dir.outputs.dir }}
         git add -N .
         git diff --quiet || echo "has-diff=true" >> $GITHUB_OUTPUT
       shell: bash
