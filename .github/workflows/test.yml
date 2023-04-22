@@ -35,6 +35,10 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Set short sha
+        id: short-sha
+        run: echo "sha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
+
       - name: Generate token
         id: generate_token
         uses: tibdex/github-app-token@v1.8.0
@@ -52,18 +56,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: pages
-          path: ${{ github.ref }}/${{ steps.short-sha.outputs.sha }}
+          path: ${{ github.event.number == 0 && ${{ github.ref_name }} || format('pr-{0}', github.event.number)/${{ steps.short-sha.outputs.sha }} }}
 
       - name: 'Check'
         id: diff-check
         run: |
           git add -N .
           git diff --quiet || echo "has-diff=true" >> $GITHUB_OUTPUT
-
-      - name: Set short sha
-        if: ${{steps.diff-check.outputs.has-diff}
-        id: short-sha
-        run: echo "sha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
 
       - name: "Install lucky_commit"
         if: ${{steps.diff-check.outputs.has-diff}}
