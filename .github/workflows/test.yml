@@ -18,6 +18,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: "Create directory"
+        run: mkdir ${{ github.event.after }}
+
       - name: "Run something"
         working-directory: ${{ github.event.after }}
         run: "touch test.md"
