@@ -1,0 +1,72 @@
+
+name: "Test Commit"
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  run:
+    name: "Run"
+
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 10
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Run something"
+        run: "touch test.md"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: pages
+          path: test.md
+
+      - name: "Get short SHA"
+        id: short-sha
+        run: echo "sha=$(git rev-parse --short=7 HEAD)" >> $GITHUB_OUTPUT
+
+  commit:
+    name: "Commit"
+
+    needs: run
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 10
+
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@c2055a00597a80f713b78b1650e8d3418f4d9a65
+        with:
+          app_id: ${{ secrets.RAJYAN_BOT_APP_ID }}
+          private_key: ${{ secrets.RAJYAN_BOT_PRIVATE_KEY }}
+
+      - name: "Checkout target repository"
+        uses: actions/checkout@v3
+        with:
+          repository: rajyan/coverage-report
+          token: ${{ steps.generate_token.outputs.token }}
+
+      - name: "Download"
+        uses: actions/download-artifact@v3
+        with:
+          name: pages
+
+      - name: "Install lucky_commit"
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: lucky_commit
+          args: --no-default-features
+
+      - name: "Commit"
+        run: |
+          git config --global user.name "rajyan"
+          git config --global user.email "kitakita7617@gmail.com"
+          git add .
+          git commit -m "Added coverage for ${{ github.event.after }}"
+          lucky_commit ${{ steps.short-sha.outputs.sha }}
+          git push
