@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Run something"
-        working_directory: pr-${{github.event.pull_request.number}}
+        working-directory: pr-${{github.event.pull_request.number}}
         run: "touch test.md"
 
       - uses: actions/upload-artifact@v3
