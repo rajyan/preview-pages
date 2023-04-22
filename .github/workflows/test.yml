@@ -58,8 +58,6 @@ jobs:
           git add -N .
           git diff --quiet || echo "has-diff=true" >> $GITHUB_OUTPUT
 
-      - run: "echo ${{steps.diff-check.outputs.has-diff}}"
-
       - name: "Install lucky_commit"
         if: ${{steps.diff-check.outputs.has-diff}}
         uses: baptiste0928/cargo-install@v2
@@ -69,7 +67,6 @@ jobs:
 
       - name: "Commit"
         if: ${{steps.diff-check.outputs.has-diff}}
-        shell: bash -ex {0}
         run: |
           chmod 755 ${{ github.sha }}
           git config --global user.name "rajyan"
