@@ -72,7 +72,7 @@ jobs:
       - name: "Commit"
         if: ${{steps.diff-check.outputs.has-diff}}
         run: |
-          chmod 755 ${{ steps.short-sha.outputs.sha }}
+          chmod 755 {{ github.ref }}/${{ steps.short-sha.outputs.sha }}
           git config --global user.name "rajyan"
           git config --global user.email "kitakita7617@gmail.com"
           git add .
