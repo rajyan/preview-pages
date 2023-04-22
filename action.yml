@@ -1,5 +1,5 @@
 name: Preview Pages
-descriptions: Action to deploy multiple Github Pages
+description: Action to deploy multiple Github Pages
 
 branding:
   icon: copy
