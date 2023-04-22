@@ -23,6 +23,7 @@ jobs:
 
       - name: "Run something"
         working-directory: ${{ github.event.after }}
+        if-no-files-found: error
         run: "touch test.md"
 
       - uses: actions/upload-artifact@v3
@@ -67,6 +68,7 @@ jobs:
         run: |
           git config --global user.name "rajyan"
           git config --global user.email "kitakita7617@gmail.com"
+          git status
           git add -A
           git commit -m "Added coverage for ${{ github.event.after }}"
           lucky_commit $(echo ${{ github.event.after }} | cut -c 1-7)
