@@ -39,6 +39,10 @@ jobs:
         id: short-sha
         run: echo "sha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
 
+      - name: Set working directory
+        id: working-dir
+        run: echo "dir=${{ github.event_name == 'pull_request' && format('pr-{0}/{1}', github.event.number, steps.short-sha.outputs.sha) || github.ref_name }}" >> $GITHUB_OUTPUT
+
       - name: Generate token
         id: generate_token
         uses: tibdex/github-app-token@v1.8.0
@@ -56,7 +60,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: pages
-          path: ${{ github.event_name == 'pull_request' && format('pr-{0}/{1}', github.event.number, steps.short-sha.outputs.sha) || github.ref_name }}
+          path: ${{ steps.working-dir.outputs.dir }}
 
       - name: 'Check'
         id: diff-check
@@ -91,5 +95,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "[Deployed page ${{ steps.short-sha.outputs.sha }}](https://rajyan.github.io/coverage-report/${{ github.ref }}/${{ steps.short-sha.outputs.sha }})"
+              body: "[Deployed page ${{ steps.short-sha.outputs.sha }}](https://rajyan.github.io/coverage-report/${{ steps.working-dir.outputs.dir }})"
             })
