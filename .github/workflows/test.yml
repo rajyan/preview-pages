@@ -66,7 +66,7 @@ jobs:
         run: |
           git config --global user.name "rajyan"
           git config --global user.email "kitakita7617@gmail.com"
-          git add .
+          git add -A
           git commit -m "Added coverage for ${{ github.event.after }}"
           lucky_commit $(echo ${{ github.event.after }} | cut -c 1-7)
           git push
