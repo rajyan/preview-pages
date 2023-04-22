@@ -56,7 +56,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: pages
-          path: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number)/steps.short-sha.outputs.sha || github.ref_name }}
+          path: ${{ github.event_name == 'pull_request' && format('pr-{0}/{1}', github.event.number, steps.short-sha.outputs.sha) || github.ref_name }}
 
       - name: 'Check'
         id: diff-check
