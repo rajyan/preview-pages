@@ -63,6 +63,7 @@ jobs:
           args: --no-default-features
 
       - name: "Commit"
+        command: bash -ex {0}
         run: |
           git config --global user.name "rajyan"
           git config --global user.email "kitakita7617@gmail.com"
