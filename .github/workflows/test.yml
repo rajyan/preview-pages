@@ -80,7 +80,7 @@ jobs:
           git push
 
       - name: comment result
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           github-token: ${{ steps.generate_token.outputs.token }}
           script: |
