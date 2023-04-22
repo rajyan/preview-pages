@@ -52,21 +52,22 @@ jobs:
           name: pages
           path: ${{ github.event.after }}
 
+      - name: 'Check'
+        id: diff-check
+        run: |
+          git add -A
+          echo has-diff=$(git diff --exit-code --quiet) >> $GITHUB_OUTPUT
+
       - name: "Install lucky_commit"
+        if: steps.diff-check.output.has-diff
         uses: baptiste0928/cargo-install@v2
         with:
           crate: lucky_commit
           args: --no-default-features
 
-      - name: 'Check'
-        id: diff-check
-        run: |
-          git add -A
-          echo has-diff=$(! git diff --exit-code --quiet) >> $GITHUB_OUTPUT
-
       - name: "Commit"
-        shell: bash -ex {0}
         if: steps.diff-check.output.has-diff
+        shell: bash -ex {0}
         run: |
           git config --global user.name "rajyan"
           git config --global user.email "kitakita7617@gmail.com"
