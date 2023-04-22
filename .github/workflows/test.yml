@@ -56,7 +56,7 @@ jobs:
         id: diff-check
         run: |
           git add -A
-          git diff --quiet || echo "has-diff=true" >> $GITHUB_OUTPUT
+          !git diff --quiet || echo "has-diff=true" >> $GITHUB_OUTPUT
 
       - run: "echo ${{steps.diff-check.outputs.has-diff}}"
 
