@@ -77,7 +77,7 @@ runs:
         git config --local user.name ${{ inputs.commit-username }}
         git config --local user.email ${{ inputs.commit-email }}
         git add .
-        git commit -m "Added coverage for ${{ github.server_url }}/${{ github.repository }}/commit/${{ steps.short-sha.outputs.sha }}" --author=${{ inputs.commit-author }}
+        git commit -m "Added coverage for ${{ github.server_url }}/${{ github.repository }}/commit/${{ steps.short-sha.outputs.sha }}" --author="${{ inputs.commit-author }}"
         lucky_commit ${{ steps.short-sha.outputs.sha }}
         git push
       shell: bash
