@@ -50,13 +50,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: pages
-          path: ${{ github.event.after }}
+          path: ${{ github.sha }}
 
       - name: 'Check'
         id: diff-check
         run: |
-          git add -A
-          git diff --quiet && echo "has-diff=true" >> $GITHUB_OUTPUT
+          git add -N .
+          git diff --quiet || echo "has-diff=true" >> $GITHUB_OUTPUT
 
       - run: "echo ${{steps.diff-check.outputs.has-diff}}"
 
@@ -71,9 +71,10 @@ jobs:
         if: ${{steps.diff-check.outputs.has-diff}}
         shell: bash -ex {0}
         run: |
+          chmod 755 ${{ github.sha }}
           git config --global user.name "rajyan"
           git config --global user.email "kitakita7617@gmail.com"
           git add .
-          git commit -m "Added coverage for ${{ github.event.after }}"
-          lucky_commit $(echo ${{ github.event.after }} | cut -c 1-7)
+          git commit -m "Added coverage for ${{ github.sha }}"
+          lucky_commit $(echo ${{ github.sha }} | cut -c 1-7)
           git push
