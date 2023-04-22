@@ -7,6 +7,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: preview-pages-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   run:
     name: "Run"
