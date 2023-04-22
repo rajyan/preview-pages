@@ -33,7 +33,7 @@ jobs:
           private_key: ${{ secrets.RAJYAN_BOT_PRIVATE_KEY }}
 
       - name: Preview Pages
-        uses: rajyan/preview-pages@v0.1
+        uses: rajyan/preview-pages@v0.1.2
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           pages-organization: rajyan
