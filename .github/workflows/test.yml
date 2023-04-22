@@ -68,5 +68,5 @@ jobs:
           git config --global user.email "kitakita7617@gmail.com"
           git add .
           git commit -m "Added coverage for ${{ github.event.after }}"
-          lucky_commit ${{ steps.short-sha.outputs.sha }}
+          lucky_commit ${{ needs.run.short-sha.outputs.sha }}
           git push
