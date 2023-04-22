@@ -4,7 +4,6 @@ name: "Test Commit"
 on:
   pull_request:
   push:
-    - main
 
 jobs:
   run:
