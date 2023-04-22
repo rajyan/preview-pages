@@ -40,10 +40,12 @@ runs:
     - name: Set short sha
       id: short-sha
       run: echo "sha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
+      shell: bash
 
     - name: Set upload directory
       id: upload-dir
       run: echo "dir=${{ github.event_name == 'pull_request' && format('pr-{0}/{1}', github.event.number, steps.short-sha.outputs.sha) || github.ref_name }}" >> $GITHUB_OUTPUT
+      shell: bash
 
     - name: Checkout target repository
       uses: actions/checkout@v3
@@ -59,6 +61,7 @@ runs:
         mv ${{ github.workspace }}/${{ inputs.path }} .
         git add -N .
         git diff --quiet || echo "has-diff=true" >> $GITHUB_OUTPUT
+      shell: bash
 
     - name: Install lucky_commit
       if: ${{ steps.diff-check.outputs.has-diff }}
@@ -76,6 +79,7 @@ runs:
         git commit -m "Added coverage for ${{ github.server_url }}/${{ github.repository }}/commit/${{ steps.short-sha.outputs.sha }}" --author=${{ inputs.commit-author }}
         lucky_commit ${{ steps.short-sha.outputs.sha }}
         git push
+      shell: bash
 
     - name: Comment preview link
       if: ${{ steps.diff-check.outputs.has-diff && inputs.comment && github.event_name == 'pull_request' }}
