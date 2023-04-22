@@ -37,5 +37,5 @@ jobs:
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           pages-organization: rajyan
-          pages-repository: code-coverage
+          pages-repository: coverage-report
           path: index.md
