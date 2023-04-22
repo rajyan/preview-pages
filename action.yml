@@ -72,6 +72,7 @@ runs:
 
     - name: Commit
       if: ${{ steps.diff-check.outputs.has-diff }}
+      working-directory: preview-pages
       run: |
         git config --local user.name ${{ inputs.commit-username }}
         git config --local user.email ${{ inputs.commit-email }}
