@@ -59,14 +59,14 @@ jobs:
           echo has-diff=$(! git diff --exit-code --quiet) >> $GITHUB_OUTPUT
 
       - name: "Install lucky_commit"
-        if: ${{steps.diff-check.output.has-diff}}
+        if: ${{steps.diff-check.outputs.has-diff}}
         uses: baptiste0928/cargo-install@v2
         with:
           crate: lucky_commit
           args: --no-default-features
 
       - name: "Commit"
-        if: ${{steps.diff-check.output.has-diff}}
+        if: ${{steps.diff-check.outputs.has-diff}}
         shell: bash -ex {0}
         run: |
           git config --global user.name "rajyan"
