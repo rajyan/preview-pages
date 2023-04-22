@@ -2,8 +2,8 @@ name: Preview Pages
 descriptions: Action to deploy multiple Github Pages
 
 branding:
-  icon: 'copy'
-  color: 'blue'
+  icon: copy
+  color: blue
 
 inputs:
   github-token:
