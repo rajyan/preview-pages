@@ -4,6 +4,7 @@ name: "Test Commit"
 on:
   pull_request:
   push:
+    - main
 
 jobs:
   run:
@@ -88,5 +89,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "[Result for ${{ steps.short-sha.outputs.sha }}](https://rajyan.github.io/coverage-report/${{ github.ref }}/${{ steps.short-sha.outputs.sha }})"
+              body: "[Deployed page for ${{ steps.short-sha.outputs.sha }}](https://rajyan.github.io/coverage-report/${{ github.ref }}/${{ steps.short-sha.outputs.sha }})"
             })
