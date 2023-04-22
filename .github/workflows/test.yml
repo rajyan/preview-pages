@@ -56,7 +56,7 @@ jobs:
         id: diff-check
         run: |
           git add -A
-          echo has-diff=$(! git diff --exit-code --quiet) >> $GITHUB_OUTPUT
+          echo "has-diff=$(! git diff --exit-code --quiet)" >> $GITHUB_OUTPUT
 
       - name: "Install lucky_commit"
         if: ${{steps.diff-check.outputs.has-diff}}
