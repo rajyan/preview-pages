@@ -19,16 +19,13 @@ jobs:
           fetch-depth: 0
 
       - name: "Run something"
+        working_directory: pr-${{github.event.pull_request.number}}
         run: "touch test.md"
 
       - uses: actions/upload-artifact@v3
         with:
           name: pages
-          path: test.md
-
-      - name: "Get short SHA"
-        id: short-sha
-        run: echo "sha=$(git rev-parse --short=7 HEAD)" >> $GITHUB_OUTPUT
+          path: pr-${{github.event.pull_request.number}}/test.md
 
   commit:
     name: "Commit"
