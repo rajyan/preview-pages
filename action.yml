@@ -1,0 +1,200 @@
+name: Preview Pages
+description: >
+  Action to deploy a preview GitHub Pages for each branch, pull request, commit.
+  This Action enables you to, for example, create previews of SPA for each branch,
+  and generate separate coverage reports for each pull request and commit.
+
+branding:
+  icon: copy
+  color: blue
+
+inputs:
+  source-dir:
+    description: >
+      Path of the directory you want to deploy.
+      This is the only required input.
+    required: true
+  token:
+    description: >
+      The GitHub App token or personal access token to access GitHub Pages publishing repository and commenting to the pull requests and branches.
+      Defaults to the repository scoped GitHub token (Which means that the repository you want to deploy GitHub Pages is the same one as you are running your workflow).
+    default: ${{ github.token }}
+
+  target-repository:
+    description: >
+      The repository you want to deploy GitHub Pages to, in the format of 'rajyan/preview-pages'.
+      Defaults to the current repository you are running the workflow.
+    default: ${{ github.repository }}
+  target-branch:
+    description: The branch you want to deploy GitHub Pages to.
+    default: gh-pages
+  target-dir:
+    description: |
+      The directory you want to deploy in the GitHub Pages repository.
+      Defaults the root directory.
+    default: .
+  configured-dir:
+    description: The directory configured in GitHub Pages repository as a source. (ex. docs)
+    default: .
+  configured-domain:
+    description: The custom domain configured in GitHub Pages repository.
+
+  # github-pages-deploy-action options
+  git-config-name:
+    description: >
+      Username of the commit when deploying to the GitHub Pages publishing repository.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices
+    default: github-actions[bot]
+  git-config-email:
+    description: >
+      Email of the commit when deploying to the GitHub Pages publishing repository.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices.
+    default: 41898282+github-actions[bot]@users.noreply.github.com
+  clean:
+    description: >
+      Whether to delete files in the destination that doesn't exist in source.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices.
+  clean-exclude:
+    description: >
+      Files or paths to exclude from clean.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices.
+  force:
+    description: >
+      Force-push on deployment. Default is false which is different from the original action.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices.
+    default: 'false'
+  tag:
+    description: >
+      Add a tag on commit.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices.
+
+  # pull request event options
+  pr-per-commit:
+    description: |
+      Whether to keep different pages per each commit SHA or overwrite per each pull request.
+      If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/pr-{{ github.event.number }}/{{ github.sha }}'.
+      If 'false' the directory will be '{{ inputs.target-dir }}/pr-{{ github.event.number }}' and overwrites on each commit.
+    default: 'true'
+  pr-comment:
+    description: >
+      Whether to comment the preview page url in a pull request and how.
+      Valid choices are 'each' which posts a comment on each commit,
+      'append', 'sticky', 'recreate', 'hide_and_recreate' see https://github.com/marocchino/sticky-pull-request-comment for the options,
+      or 'none' if you don't need the comment.
+    default: 'each'
+
+  # push event options
+  branch-per-commit:
+    description: |
+      Whether to keep different pages per each commit SHA or overwrite per each branch.
+      If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/{{ github.ref_name }}/{{ github.sha }}'.
+      If 'false' the directory will be '{{ inputs.target-dir }}/{{ github.ref_name }}' and overwrites on each commit.
+    default: 'true'
+  branch-comment:
+    description: >
+      Whether to comment the preview page url on the branches commit.
+      Valid options are 'each' or 'none'.
+    default: 'each'
+
+outputs:
+  pages-url:
+    description: The deployed GitHub Pages url
+    value: ${{ steps.params.outputs.pages-url }}
+  upload-dir:
+    description: The deployed directory under {{inputs.target-dir}}
+    value: ${{ steps.params.outputs.upload-dir }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup parameters
+      id: params
+      env:
+        upload_dir: >
+          ${{
+            github.event_name == 'pull_request'
+            && format('pr-{0}/{1}', github.event.number, inputs.pr-per-commit     == 'true' && github.sha || '')
+            || format('{0}/{1}',    github.ref_name,     inputs.branch-per-commit == 'true' && github.sha || '')
+          }}
+        config_domain: ${{ inputs.configured-domain }}
+        config_dir: ${{ inputs.configured-dir }}
+        target_dir: ${{ inputs.target-dir }}
+        repo: ${{ inputs.target-repository }}
+      run: |
+        echo "upload-dir=$upload_dir" >> $GITHUB_OUTPUT
+        page_path=$(realpath -m -s --relative-to "$config_dir" "${target_dir}/${upload_dir}")
+        org=$(echo "$repo" | cut -d "/" -f 1)
+        repo_name=$(echo "$repo" | cut -d "/" -f 2)
+        if [ -z "$config_domain" ]; then
+          echo "pages-url=${org}.github.io/${repo_name}/${page_path}" >> $GITHUB_OUTPUT
+        else
+          echo "pages-url=${config_domain}/${page_path}" >> $GITHUB_OUTPUT
+        fi
+
+      shell: bash
+
+    - name: Setup comment body
+      id: comment
+      env:
+        sha: ${{ github.sha }}
+        server_url: ${{ github.server_url }}
+        pages_url: ${{ steps.params.outputs.pages-url }}
+        target_repository: ${{ inputs.target-repository }}
+        target_branch: ${{ inputs.target-branch }}
+      run: |
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "body<<$EOF" >> $GITHUB_OUTPUT
+        echo "Deployed ${sha} to <https://${pages_url}>" >> $GITHUB_OUTPUT
+        echo "on [branch ${target_branch} in ${target_repository}](${server_url}/${target_repository}/tree/${target_branch})" >> $GITHUB_OUTPUT
+        echo "$EOF" >> $GITHUB_OUTPUT
+
+      shell: bash
+
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@ba1486788b0490a235422264426c45848eac35c6 #4.4.1
+      with:
+        token: ${{ inputs.token }}
+        repository-name: ${{ inputs.target-repository }}
+        branch: ${{ inputs.target-branch }}
+        folder: ${{ inputs.source-dir }}
+        target-folder: ${{ inputs.target-dir }}/${{ steps.params.outputs.upload-dir }}
+        git-config-name: ${{ inputs.git-config-name }}
+        git-config-email: ${{ inputs.git-config-email }}
+        clean: ${{ inputs.clean }}
+        clean-exclude: ${{ inputs.clean-exclude }}
+        force: ${{ inputs.force }}
+        tag: ${{ inputs.tag }}
+
+    - name: Comment preview link to pull request
+      uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 #2.6.2
+      if: ${{ github.event_name == 'pull_request' && inputs.pr-comment != 'none' && inputs.pr-comment != 'each' }}
+      with:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        message: ${{ steps.comment.outputs.body }}
+        append: ${{ inputs.pr-comment == 'append' }}
+        recreate: ${{ inputs.pr-comment == 'recreate' }}
+        hide_and_recreate: ${{ inputs.pr-comment == 'hide_and_recreate' }}
+
+    - name: Comment preview link to commit
+      uses: actions/github-script@v6
+      if: ${{ github.event_name == 'push' && inputs.branch-comment != 'none' || github.event_name == 'pull_request' && inputs.pr-comment == 'each' }}
+      env:
+        body: ${{ steps.comment.outputs.body }}
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          if (context.eventName == 'push') {
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: process.env.body,
+            })
+          } else {
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: process.env.body,
+            })
+          }

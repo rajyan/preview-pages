@@ -1,0 +1,23 @@
+
+name: Update README
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: npalm/action-docs-action@0c5419aab52ef29ce60bb7dd9d111cf54ad19ac5 #1.4.0
+
+      - uses: peter-evans/create-pull-request@5b4a9f6a9e2af26e5f02351490b90d01eb8ec1e5 #5.0.0

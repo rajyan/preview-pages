@@ -1,0 +1,36 @@
+
+name: Clean up pr previews
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  pull-requests: write
+  contents: write
+
+concurrency:
+  group: preview-pages-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  clean-up:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+
+      - name: Clean up
+        run: |
+          rm -rf pr-${{ github.event.number }}
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .
+          git commit -m "Clean preview for pr-${{ github.event.number }}"
+          git push
