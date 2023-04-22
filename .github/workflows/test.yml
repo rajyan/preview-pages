@@ -23,81 +23,19 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Run something
-        run: "touch index.md && echo 'test' >> index.md"
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: pages
-          if-no-files-found: error
-          path: index.md
-
-  commit:
-    name: Commit
-
-    needs: run
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Set short sha
-        id: short-sha
-        run: echo "sha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
-
-      - name: Set working directory
-        id: working-dir
-        run: echo "dir=${{ github.event_name == 'pull_request' && format('pr-{0}/{1}', github.event.number, steps.short-sha.outputs.sha) || github.ref_name }}" >> $GITHUB_OUTPUT
+        run: "touch index.md && echo 'test2' >> index.md"
 
       - name: Generate token
-        id: generate_token
+        id: generate-token
         uses: tibdex/github-app-token@v1.8.0
         with:
           app_id: ${{ secrets.RAJYAN_BOT_APP_ID }}
           private_key: ${{ secrets.RAJYAN_BOT_PRIVATE_KEY }}
 
-      - name: Checkout target repository
-        uses: actions/checkout@v3
+      - name: Preview Pages
+        uses: rajyan/preview-pages@v0.1.7
         with:
-          repository: rajyan/coverage-report
-          token: ${{ steps.generate_token.outputs.token }}
-
-      - name: Download
-        uses: actions/download-artifact@v3
-        with:
-          name: pages
-          path: ${{ steps.working-dir.outputs.dir }}
-
-      - name: Check
-        id: diff-check
-        run: |
-          git add -N .
-          git diff --quiet || echo "has-diff=true" >> $GITHUB_OUTPUT
-
-      - name: Install lucky_commit
-        if: ${{steps.diff-check.outputs.has-diff}}
-        uses: baptiste0928/cargo-install@v2
-        with:
-          crate: lucky_commit
-          args: --no-default-features
-
-      - name: Commit
-        if: ${{steps.diff-check.outputs.has-diff}}
-        run: |
-          git config --global user.name "rajyan"
-          git config --global user.email "kitakita7617@gmail.com"
-          git add .
-          git commit -m "Added coverage for ${{ github.server_url }}/${{ github.repository }}/commit/${{ steps.short-sha.outputs.sha }}"
-          lucky_commit ${{ steps.short-sha.outputs.sha }}
-          git push
-
-      - name: Comment Result
-        if: ${{steps.diff-check.outputs.has-diff && github.event_name == 'pull_request'}}
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ steps.generate_token.outputs.token }}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: "[Deployed page ${{ steps.short-sha.outputs.sha }}](https://rajyan.github.io/coverage-report/${{ steps.working-dir.outputs.dir }})"
-            })
+          github-token: ${{ steps.generate-token.outputs.token }}
+          pages-organization: rajyan
+          pages-repository: coverage-report
+          path: index.md
