@@ -78,3 +78,15 @@ jobs:
           git commit -m "Added coverage for ${{ github.server_url }}/${{ github.repository }}/commit/${{ steps.short-sha.outputs.sha }}"
           lucky_commit ${{ steps.short-sha.outputs.sha }}
           git push
+
+      - name: comment result
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "[Result for ${{ steps.short-sha.outputs.sha }}](https://rajyan.github.io/coverage-report/${{ github.ref }}/${{ steps.short-sha.outputs.sha }})"
+            })
