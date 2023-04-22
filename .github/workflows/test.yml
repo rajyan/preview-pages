@@ -24,7 +24,7 @@ jobs:
       - name: "Run something"
         working-directory: ${{ github.event.after }}
         if-no-files-found: error
-        run: "touch test.md"
+        run: "touch test.md && echo 'test' >> test.md"
 
       - uses: actions/upload-artifact@v3
         with:
