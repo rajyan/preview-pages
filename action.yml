@@ -71,7 +71,7 @@ runs:
         crate: lucky_commit
         args: --no-default-features
 
-    - name: Commit
+    - name: Commit and push to Github Pages
       if: ${{ steps.diff-check.outputs.has-diff }}
       working-directory: preview-pages
       run: |
