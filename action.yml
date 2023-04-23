@@ -78,7 +78,7 @@ runs:
         git config --local user.name ${{ inputs.commit-username }}
         git config --local user.email ${{ inputs.commit-email }}
         git add .
-        git commit -m "Added coverage for ${{ github.server_url }}/${{ github.repository }}/commit/${{ steps.short-sha.outputs.sha }}" --author="${{ inputs.commit-author }}"
+        git commit -m "Added assets from ${{ github.server_url }}/${{ github.repository }}/commit/${{ steps.short-sha.outputs.sha }}" --author="${{ inputs.commit-author }}"
         lucky_commit ${{ steps.short-sha.outputs.sha }}
         git push
       shell: bash
@@ -93,5 +93,5 @@ runs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: "[Deployed page ${{ steps.short-sha.outputs.sha }}](https://rajyan.github.io/coverage-report/${{ steps.upload-dir.outputs.dir }})"
+            body: "[Deployed page ${{ steps.short-sha.outputs.sha }}](https://${{ inputs.pages-organization }}.github.io/${{ github.repository }}/${{ steps.upload-dir.outputs.dir }})"
           })
