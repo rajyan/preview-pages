@@ -1,5 +1,5 @@
 name: Preview Pages
-description: Action to deploy multiple Github Pages
+description: Action to deploy GitHub Pages for each branch, pull request, commit
 
 branding:
   icon: copy
@@ -7,46 +7,65 @@ branding:
 
 inputs:
   token:
-    description: The Github App token or personal access token to access Github Pages publishing repository
+    description: >
+      The GitHub App token or personal access token to access GitHub Pages publishing repository.
+      Defaults to the repository scoped GitHub token (Which means that the repository you want to deploy GitHub Pages is the same one as you are running your workflow).
     required: true
     default: ${{ github.token }}
-  path:
-    description: Path of the directory containing the static assets to deploy
+  source-dir:
+    description: Path of the directory you want to deploy.
     required: true
 
-  preview-pages-repository:
-    description: Repository of the Github Pages publishing repository
+  target-repository:
+    description: >
+      The repository you want to deploy GitHub Pages to, in format of 'rajyan/preview-pages'.
+      Defaults to the current repository you are running the workflow.
     required: false
     default: ${{ github.repository }}
-  preview-pages-branch:
-    description: Branch on which the previews will be deployed.
+  target-branch:
+    description: The branch you want to deploy GitHub Pages to.
     required: false
     default: gh-pages
-  preview-pages-dir:
-    description: Path of the directory containing the static assets to deploy
+  target-dir:
+    description: The directory you want to deploy in the GitHub Pages repository.
     required: false
-    default: ''
+  configured-dir:
+    description: The directory configured in GitHub Pages repository as a source. (ex. /docs)
+    required: false
+  configured-domain:
+    description: The custom domain configured in GitHub Pages repository.
+    required: false
 
-  pull-request-sub-dir:
-    description: Path of the directory containing the static assets to deploy
+  pr-by-commit:
+    description: >
+      Whether to keep different pages by each commit SHA or overwrite per each pull request.
+      If 'true' the deploy directory for pull request would be ${{ inputs.target-dir }}/pr-${{ github.event.number }}/${{ github.sha }}.
+      If 'false' the directory would be ${{ inputs.target-dir }}/pr-${{ github.event.number }} and overwrites on each commit.
     required: false
-    default: ${{ github.sha }}
-  branch-sub-dir:
-    description: Path of the directory containing the static assets to deploy
+    default: 'true'
+  branch-by-commit:
+    description: >
+      Whether to keep different pages by each commit SHA or overwrite per each branch.
+      If 'true' the deploy directory for pull request would be ${{ inputs.target-dir }}/${{ github.ref_name }}/${{ github.sha }}.
+      If 'false' the directory would be ${{ inputs.target-dir }}/${{ github.ref_name }} and overwrites on each commit.
     required: false
-    default: ''
+    default: 'false'
+
   git-config-name:
-    description: Username of the commit when deploying to the Github Pages publishing repository
+    description: Username of the commit when deploying to the GitHub Pages publishing repository.
     required: false
     default: github-actions[bot]
   git-config-email:
-    description: Email of the commit when deploying to the Github Pages publishing repository
+    description: Email of the commit when deploying to the GitHub Pages publishing repository.
     required: false
     default: 41898282+github-actions[bot]@users.noreply.github.com
   comment:
-    description: Whether to comment the preview page url to a pull request
+    description: >
+      Whether to comment the preview page url in a pull request and how.
+      Valid choices are 'append', 'sticky', 'recreate', 'hide_and_recreate', 'none'.
+      See https://github.com/marocchino/sticky-pull-request-comment for the options.
     required: false
-    default: 'recreate, sticky, comment, none'
+    default: 'append'
 
 runs:
   using: composite
