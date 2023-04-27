@@ -88,6 +88,7 @@ runs:
         token: ${{ inputs.github-token }}
 
     - name: Deploy 🚀
+      working-directory: preview-pages
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         folder: ${{ inputs.path }}
