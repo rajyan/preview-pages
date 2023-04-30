@@ -86,7 +86,7 @@ runs:
         short_sha=$(echo ${{ github.sha }} | cut -c 1-7)
         echo "short-sha=$short_sha" >> $GITHUB_OUTPUT
         
-        if ${{ github.event_name == 'pull_request' }}; then
+        if [ ${{ github.event_name == 'pull_request' }} = true ]; then
           upload_dir="pr-${{ github.event.number }}/$(${{ inputs.pr-by-commit }} && echo $short_sha)"
         else
           upload_dir="${{ github.ref_name }}/$(${{ inputs.branch-by-commit }} && echo $short_sha)"
@@ -95,7 +95,7 @@ runs:
         page_path=$(realpath -s --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}/$upload_dir")
         org=$(echo "${{ inputs.target-repository }}" | cut -d "/" -f 1)
         repo=$(echo "${{ inputs.target-repository }}" | cut -d "/" -f 2)
-        if [[ -z "${{ inputs.configured-domain }}" ]]; then
+        if [ -z "${{ inputs.configured-domain }}" ]; then
           echo "pages-url=${org}.github.io/${repo}/${page_path}" >> $GITHUB_OUTPUT
         else
           echo "pages-url=${{ inputs.configured-domain }}/${page_path}" >> $GITHUB_OUTPUT
