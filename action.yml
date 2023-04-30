@@ -49,9 +49,9 @@ inputs:
     default: 41898282+github-actions[bot]@users.noreply.github.com
 
   # pull request event options
-  pr-by-commit:
+  pr-per-commit:
     description: |
-      Whether to keep different pages by each commit SHA or overwrite per each pull request.
+      Whether to keep different pages per each commit SHA or overwrite per each pull request.
       If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/pr-{{ github.event.number }}/{{ github.sha }}'.
       If 'false' the directory will be '{{ inputs.target-dir }}/pr-{{ github.event.number }}' and overwrites on each commit.
     required: false
@@ -66,9 +66,9 @@ inputs:
     default: 'each'
 
   # push event options
-  branch-by-commit:
+  branch-per-commit:
     description: |
-      Whether to keep different pages by each commit SHA or overwrite per each branch.
+      Whether to keep different pages per each commit SHA or overwrite per each branch.
       If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/{{ github.ref_name }}/{{ github.sha }}'.
       If 'false' the directory will be '{{ inputs.target-dir }}/{{ github.ref_name }}' and overwrites on each commit.
     required: false
@@ -81,30 +81,40 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Set short sha
+      id: short-sha
+      run: echo "sha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
+      shell: bash
+
     - name: Setup parameters
       id: params
-      run: |
-        short_sha=$(echo ${{ github.sha }} | cut -c 1-7)
-        echo "short-sha=$short_sha" >> $GITHUB_OUTPUT
-        
-        if [ ${{ github.event_name == 'pull_request' }} = true ]; then
-          upload_dir="pr-${{ github.event.number }}/$(${{ inputs.pr-by-commit }} && echo $short_sha || echo '')"
-        else
-          upload_dir="${{ github.ref_name }}/$(${{ inputs.branch-by-commit }} && echo $short_sha || echo '')"
-        fi
+      env:
+        upload_dir: >
+          ${{
+            format(
+              github.event_name == 'pull_request' && 'pr-{0}/{1}' || {0}/{1},
+              github.event_name == 'pull_request' && github.event.number || github.ref_name,
+              (github.event_name  == 'pull_request' && inputs.pr-per-commit || inputs.branch-by-commit) 
+                && steps.short-sha.outputs.sha
+                || ''
+            )
+          }}
+        config_domain: ${{ inputs.configured-domain }}
+        config_dir: ${{ inputs.configured-dir }}
+        target_dir: ${{ inputs.target-dir }}
+        repo: ${{ inputs.target-repository }}
+      run: |      
         echo "upload-dir=$upload_dir" >> $GITHUB_OUTPUT
-        
-        page_path=$(realpath -m -s --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}/$upload_dir")
-        org=$(echo "${{ inputs.target-repository }}" | cut -d "/" -f 1)
-        repo=$(echo "${{ inputs.target-repository }}" | cut -d "/" -f 2)
-        if [ -z "${{ inputs.configured-domain }}" ]; then
-          echo "pages-url=${org}.github.io/${repo}/${page_path}" >> $GITHUB_OUTPUT
+        page_path=$(realpath -m -s --relative-to "$config_dir" "$target_dir/$upload_dir")
+        org=$(echo "$repo" | cut -d "/" -f 1)
+        repo_name=$(echo "$repo" | cut -d "/" -f 2)
+        if [ -z "$config_domain" ]; then
+          echo "pages-url=${org}.github.io/${repo_name}/${page_path}" >> $GITHUB_OUTPUT
         else
-          echo "pages-url=${{ inputs.configured-domain }}/${page_path}" >> $GITHUB_OUTPUT
+          echo "pages-url=/${page_path}" >> $GITHUB_OUTPUT
         fi
         
         echo "${{ inputs.pr-comment }}=true" >> $GITHUB_OUTPUT
-        echo "comment=Deployed ${{ steps.params.outputs.short-sha }} to <https://${{ steps.params.outputs.pages-url }}>"
 
       shell: bash
 
@@ -125,7 +135,7 @@ runs:
       with:
         GITHUB_TOKEN: ${{ inputs.token }}
         message: |
-          Deployed ${{ steps.params.outputs.short-sha }} to <https://${{ steps.params.outputs.pages-url }}>
+          Deployed ${{ steps.short-sha.outputs.sha }} to <https://${{ steps.params.outputs.pages-url }}>
         append: ${{ steps.params.outputs.append || false }}
         recreate: ${{ steps.params.outputs.recreate || false }}
         hide_and_recreate: ${{ steps.params.outputs.hide_and_recreate || false }}
@@ -141,13 +151,13 @@ runs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
-              body: "Deployed ${{ steps.params.outputs.short-sha }} to <https://${{ steps.params.outputs.pages-url }}>"
+              body: "Deployed ${{ steps.short-sha.outputs.sha }} to <https://${{ steps.params.outputs.pages-url }}>"
             })
           } else {
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: "Deployed ${{ steps.params.outputs.short-sha }} to <https://${{ steps.params.outputs.pages-url }}>"
+              body: "Deployed ${{ steps.short-sha.outputs.sha }} to <https://${{ steps.params.outputs.pages-url }}>"
             })
           }
