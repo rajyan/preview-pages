@@ -90,10 +90,10 @@ runs:
           echo "upload-dir=format('{0}/{1}',  github.ref_name, $short_sha)" >> $GITHUB_OUTPUT
         fi
         
-        page_path=$(realpath --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}")
+        page_path=$(realpath --relative-to "${{ inputs.configured-dir || / }}" "${{ inputs.target-dir }}")
         org=$(echo "${{ inputs.deploy-repository }}" | cut -d "/" -f 1)
         repo=$(echo "${{ inputs.deploy-repository }}" | cut -d "/" -f 2)
-        if [[ -z ${{ inputs.configured-domain }} ]];
+        if [[ -z "${{ inputs.configured-domain }}" ]];
           echo "pages-url=${org}.github.io/${repo}/${page_path}" >> $GITHUB_OUTPUT
         else
           echo "pages-url=${{ inputs.configured-domain }}/${page_path}" >> $GITHUB_OUTPUT
