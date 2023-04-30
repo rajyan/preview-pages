@@ -27,7 +27,9 @@ inputs:
     required: false
     default: gh-pages
   target-dir:
-    description: The directory you want to deploy in the GitHub Pages repository.
+    description: >
+      The directory you want to deploy in the GitHub Pages repository.
+      Defaults the root directory.
     required: false
   configured-dir:
     description: The directory configured in GitHub Pages repository as a source. (ex. /docs)
@@ -39,18 +41,19 @@ inputs:
   pr-by-commit:
     description: >
       Whether to keep different pages by each commit SHA or overwrite per each pull request.
-      If 'true' the deploy directory for pull request would be ${{ inputs.target-dir }}/pr-${{ github.event.number }}/${{ github.sha }}.
-      If 'false' the directory would be ${{ inputs.target-dir }}/pr-${{ github.event.number }} and overwrites on each commit.
+      If 'true' the deploy directory for pull request will be ${{ inputs.target-dir }}/pr-${{ github.event.number }}/${{ github.sha }}.
+      If 'false' the directory will be ${{ inputs.target-dir }}/pr-${{ github.event.number }} and overwrites on each commit.
     required: false
     default: 'true'
   branch-by-commit:
     description: >
       Whether to keep different pages by each commit SHA or overwrite per each branch.
-      If 'true' the deploy directory for pull request would be ${{ inputs.target-dir }}/${{ github.ref_name }}/${{ github.sha }}.
-      If 'false' the directory would be ${{ inputs.target-dir }}/${{ github.ref_name }} and overwrites on each commit.
+      If 'true' the deploy directory for pull request will be ${{ inputs.target-dir }}/${{ github.ref_name }}/${{ github.sha }}.
+      If 'false' the directory will be ${{ inputs.target-dir }}/${{ github.ref_name }} and overwrites on each commit.
     required: false
     default: 'false'
 
+  # configuration for other actions
   git-config-name:
     description: Username of the commit when deploying to the GitHub Pages publishing repository.
     required: false
@@ -79,13 +82,6 @@ runs:
       id: upload-dir
       run: echo "dir=${{ github.event_name == 'pull_request' && format('pr-{0}/{1}', github.event.number, steps.short-sha.outputs.sha) || github.ref_name }}" >> $GITHUB_OUTPUT
       shell: bash
-
-    - name: Checkout target repository
-      uses: actions/checkout@v3
-      with:
-        path: preview-pages
-        repository: ${{ inputs.pages-organization }}/${{ inputs.pages-repository }}
-        token: ${{ inputs.github-token }}
 
     - name: Deploy 🚀
       working-directory: preview-pages
