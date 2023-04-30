@@ -83,15 +83,16 @@ runs:
     - name: Setup parameters
       id: params
       run: |
-        echo "short-sha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
+        short_sha=$(echo ${{ github.sha }} | cut -c 1-7)
+        echo "short-sha=$short_sha" >> $GITHUB_OUTPUT
         
-        if ${{ github.event_name == 'pull_request' }} ; then
-          echo "upload-dir=${{ format('pr-{0}/{1}', github.event.number, steps.params.outputs.short-sha) }}" >> $GITHUB_OUTPUT
+        if [ ${{ github.event_name == 'pull_request' }} ]; then
+          upload_dir="pr-${{ github.event.number }}/"${{ inputs.pr-by-commit }} && $short_sha || ''"
         else
-          echo "upload-dir=${{ format('{0}/{1}',  github.ref_name, steps.params.outputs.short-sha) }}" >> $GITHUB_OUTPUT
+          upload_dir="${{ github.ref_name }}/${{ inputs.pr-by-commit }} && $short_sha || ''"
         fi
         
-        page_path=$(realpath -s --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}")
+        page_path=$(realpath -s --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}/$upload_dir")
         org=$(echo "${{ inputs.target-repository }}" | cut -d "/" -f 1)
         repo=$(echo "${{ inputs.target-repository }}" | cut -d "/" -f 2)
         if [[ -z "${{ inputs.configured-domain }}" ]]; then
@@ -123,13 +124,13 @@ runs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
-              body: "[Deployed page ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
+              body: "[Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
             })
           } else {
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: "[Deployed page ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
+              body: "[Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
             })
           }
