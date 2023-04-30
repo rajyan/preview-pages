@@ -99,9 +99,18 @@ runs:
       with:
         github-token: ${{ inputs.token }}
         script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: "[Deployed page ${{ steps.short-sha.outputs.sha }}](https://${{ inputs.pages-organization }}.github.io/${{ inputs.pages-repository }}/${{ steps.upload-dir.outputs.dir }})"
-          })
+          if (context.eventName == 'push') {
+            github.rest.issues.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: "[Deployed page ${{ steps.short-sha.outputs.sha }}](https://${{ inputs.pages-organization }}.github.io/${{ inputs.pages-repository }}/${{ steps.upload-dir.outputs.dir }})"
+            })
+          } else {
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: "[Deployed page ${{ steps.short-sha.outputs.sha }}](https://${{ inputs.pages-organization }}.github.io/${{ inputs.pages-repository }}/${{ steps.upload-dir.outputs.dir }})"
+            })
+          }
