@@ -23,6 +23,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Run something
+        working-directory: test
         run: "touch index.md && echo 'test2' >> index.md"
 
       - name: Generate token
@@ -37,4 +38,4 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           target-repository: rajyan/coverage-report
-          source-dir: index.md
+          source-dir: test
