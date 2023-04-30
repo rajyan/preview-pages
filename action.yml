@@ -86,11 +86,11 @@ runs:
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        folder: ${{ inputs.path }}
+        folder: ${{ inputs.source-dir }}
         token: ${{ inputs.token }}
-        repository-name: ${{ inputs.repository }}
-        branch: ${{ inputs.preview-pages-branch }}
-        target-folder: ${{ inputs.preview-pages-dir }}
+        repository-name: ${{ inputs.target-repository }}
+        branch: ${{ inputs.target-branch }}
+        target-folder: ${{ inputs.target-dir }}
         git-config-name: ${{ inputs.git-config-name }}
         git-config-email: ${{ inputs.git-config-email }}
 
