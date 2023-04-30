@@ -121,6 +121,7 @@ runs:
       uses: marocchino/sticky-pull-request-comment@v2
       if: ${{ github.event_name == 'pull_request' && !steps.params.outputs.none }}
       with:
+        GITHUB_TOKEN: ${{ inputs.token }}
         message: |
           "[Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
         append: ${{ steps.params.outputs.append || false }}
@@ -138,13 +139,13 @@ runs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
-              body: "[Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
+              body: "Deployed ${{ steps.params.outputs.short-sha }} to <https://${{ steps.params.outputs.pages-url }}>"
             })
           } else {
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: "[Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
+              body: "Deployed ${{ steps.params.outputs.short-sha }} to <https://${{ steps.params.outputs.pages-url }}>"
             })
           }
