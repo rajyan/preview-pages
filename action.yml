@@ -1,5 +1,5 @@
 name: Preview Pages
-description: Action to deploy GitHub Pages for each branch, pull request, commit
+description: Action to deploy a preview GitHub Pages for each branch, pull request, commit
 
 branding:
   icon: copy
