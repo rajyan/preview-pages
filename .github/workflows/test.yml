@@ -35,7 +35,6 @@ jobs:
       - name: Preview Pages
         uses: rajyan/preview-pages@d5429c30d6da8cfcfa993e875f513427bcc0d3b8
         with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          pages-organization: rajyan
-          pages-repository: coverage-report
-          path: index.md
+          token: ${{ steps.generate-token.outputs.token }}
+          target-repository: rajyan/coverage-report
+          target-dir: index.md
