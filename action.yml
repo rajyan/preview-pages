@@ -83,7 +83,7 @@ runs:
       run: echo "dir=${{ github.event_name == 'pull_request' && format('pr-{0}/{1}', github.event.number, steps.short-sha.outputs.sha) || github.ref_name }}" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Deploy 🚀
+    - name: Deploy
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         folder: ${{ inputs.source-dir }}
@@ -97,7 +97,7 @@ runs:
     - name: Comment preview link
       uses: actions/github-script@v6
       with:
-        github-token: ${{ inputs.github-token }}
+        github-token: ${{ inputs.token }}
         script: |
           github.rest.issues.createComment({
             issue_number: context.issue.number,
