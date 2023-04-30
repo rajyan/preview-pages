@@ -94,7 +94,7 @@ runs:
             format(
               github.event_name == 'pull_request' && 'pr-{0}/{1}' || '{0}/{1}',
               github.event_name == 'pull_request' && github.event.number || github.ref_name,
-              (github.event_name  == 'pull_request' && inputs.pr-per-commit || inputs.branch-by-commit) 
+              (github.event_name == 'pull_request' && inputs.pr-per-commit || inputs.branch-per-commit) 
                 && steps.short-sha.outputs.sha
                 || ''
             )
@@ -113,8 +113,6 @@ runs:
         else
           echo "pages-url=/${page_path}" >> $GITHUB_OUTPUT
         fi
-        
-        echo "${{ inputs.pr-comment }}=true" >> $GITHUB_OUTPUT
 
       shell: bash
 
@@ -131,18 +129,18 @@ runs:
 
     - name: Comment preview link to pull request
       uses: marocchino/sticky-pull-request-comment@v2
-      if: ${{ github.event_name == 'pull_request' && !steps.params.outputs.none && !steps.params.outputs.each }}
+      if: ${{ github.event_name == 'pull_request' && inputs.pr-comment != 'none' && inputs.pr-comment != 'each' }}
       with:
         GITHUB_TOKEN: ${{ inputs.token }}
         message: |
-          Deployed ${{ steps.short-sha.outputs.sha }} to <https://${{ steps.params.outputs.pages-url }}>
-        append: ${{ steps.params.outputs.append || false }}
-        recreate: ${{ steps.params.outputs.recreate || false }}
-        hide_and_recreate: ${{ steps.params.outputs.hide_and_recreate || false }}
+          Deployed ${{ github.sha }} to <https://${{ steps.params.outputs.pages-url }}>
+        append: ${{ inputs.pr-comment == 'append' }}
+        recreate: ${{ inputs.pr-comment == 'recreate' }}
+        hide_and_recreate: ${{ inputs.pr-comment == 'hide_and_recreate' }}
 
     - name: Comment preview link to commit
       uses: actions/github-script@v6
-      if: ${{ github.event_name == 'push' && inputs.branch-comment || github.event_name == 'pull_request' && steps.params.outputs.each }}
+      if: ${{ github.event_name == 'push' && inputs.branch-comment || github.event_name == 'pull_request' && inputs.pr-comment == 'each' }}
       with:
         github-token: ${{ inputs.token }}
         script: |
@@ -151,13 +149,13 @@ runs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
-              body: "Deployed ${{ steps.short-sha.outputs.sha }} to <https://${{ steps.params.outputs.pages-url }}>"
+              body: "Deployed ${{ github.sha }} to <https://${{ steps.params.outputs.pages-url }}>"
             })
           } else {
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: "Deployed ${{ steps.short-sha.outputs.sha }} to <https://${{ steps.params.outputs.pages-url }}>"
+              body: "Deployed ${{ github.sha }} to <https://${{ steps.params.outputs.pages-url }}>"
             })
           }
