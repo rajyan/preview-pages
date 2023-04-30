@@ -37,4 +37,4 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           target-repository: rajyan/coverage-report
-          target-dir: index.md
+          source-dir: index.md
