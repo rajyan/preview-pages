@@ -100,7 +100,7 @@ runs:
         github-token: ${{ inputs.token }}
         script: |
           if (context.eventName == 'push') {
-            github.rest.createCommitComment({
+            github.rest.repos.createCommitComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
