@@ -1,0 +1,21 @@
+
+name: Test Commit
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run:
+    name: Run
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: npalm/action-docs-action
+      - uses: stefanzweifel/git-auto-commit-action@v4
