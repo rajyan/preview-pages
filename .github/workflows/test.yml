@@ -23,8 +23,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Run something
-        working-directory: test
-        run: "touch index.md && echo 'test2' >> index.md"
+        run: "mkdir test && touch test/index.md && echo 'test2' >> test/index.md"
 
       - name: Generate token
         id: generate-token
