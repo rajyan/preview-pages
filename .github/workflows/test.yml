@@ -36,5 +36,6 @@ jobs:
         uses: rajyan/preview-pages@main
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          target-repository: rajyan/coverage-report
           source-dir: test
+          target-repository: rajyan/coverage-report
+          target-branch: main
