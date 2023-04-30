@@ -40,4 +40,3 @@ jobs:
           target-repository: rajyan/coverage-report
           target-branch: main
           pr-comment: recreate
-          pr-per-branch: true
