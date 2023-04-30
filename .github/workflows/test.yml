@@ -39,3 +39,4 @@ jobs:
           source-dir: test
           target-repository: rajyan/coverage-report
           target-branch: main
+          pr-comment: recreate
