@@ -72,11 +72,13 @@ inputs:
       If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/{{ github.ref_name }}/{{ github.sha }}'.
       If 'false' the directory will be '{{ inputs.target-dir }}/{{ github.ref_name }}' and overwrites on each commit.
     required: false
-    default: 'false'
-  branch-comment:
-    description: Whether to comment the preview page url on the branches commit.
-    required: false
     default: 'true'
+  branch-comment:
+    description: >
+      Whether to comment the preview page url on the branches commit.
+      Valid options are 'each' or 'none'.
+    required: false
+    default: 'each'
 
 runs:
   using: composite
@@ -100,13 +102,13 @@ runs:
         repo: ${{ inputs.target-repository }}
       run: |      
         echo "upload-dir=$upload_dir" >> $GITHUB_OUTPUT
-        page_path=$(realpath -m -s --relative-to "$config_dir" "$target_dir/$upload_dir")
+        page_path=$(realpath -m -s --relative-to "$config_dir" "${target_dir}/${upload_dir}")
         org=$(echo "$repo" | cut -d "/" -f 1)
         repo_name=$(echo "$repo" | cut -d "/" -f 2)
         if [ -z "$config_domain" ]; then
           echo "pages-url=${org}.github.io/${repo_name}/${page_path}" >> $GITHUB_OUTPUT
         else
-          echo "pages-url=/${page_path}" >> $GITHUB_OUTPUT
+          echo "pages-url=${config_domain}/${page_path}" >> $GITHUB_OUTPUT
         fi
 
       shell: bash
@@ -135,7 +137,7 @@ runs:
 
     - name: Comment preview link to commit
       uses: actions/github-script@v6
-      if: ${{ github.event_name == 'push' && inputs.branch-comment || github.event_name == 'pull_request' && inputs.pr-comment == 'each' }}
+      if: ${{ github.event_name == 'push' && inputs.pr-comment != 'none' || github.event_name == 'pull_request' && inputs.pr-comment == 'each' }}
       with:
         github-token: ${{ inputs.token }}
         script: |

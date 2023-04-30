@@ -40,3 +40,5 @@ jobs:
           target-repository: rajyan/coverage-report
           target-branch: main
           pr-comment: recreate
+          branch-per-commit: false
+          branch-comment: none
