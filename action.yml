@@ -120,7 +120,7 @@ runs:
 
     - name: Comment preview link to pull request
       uses: marocchino/sticky-pull-request-comment@v2
-      if: ${{ github.event_name == 'pull_request' && (!steps.params.outputs.none || !steps.params.outputs.each) }}
+      if: ${{ github.event_name == 'pull_request' && !steps.params.outputs.none && !steps.params.outputs.each }}
       with:
         GITHUB_TOKEN: ${{ inputs.token }}
         message: |
