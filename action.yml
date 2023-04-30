@@ -92,7 +92,7 @@ runs:
         upload_dir: >
           ${{
             format(
-              github.event_name == 'pull_request' && 'pr-{0}/{1}' || {0}/{1},
+              github.event_name == 'pull_request' && 'pr-{0}/{1}' || '{0}/{1}',
               github.event_name == 'pull_request' && github.event.number || github.ref_name,
               (github.event_name  == 'pull_request' && inputs.pr-per-commit || inputs.branch-by-commit) 
                 && steps.short-sha.outputs.sha
