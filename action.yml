@@ -92,7 +92,7 @@ runs:
           upload_dir="${{ github.ref_name }}/$(${{ inputs.branch-by-commit }} && echo $short_sha)"
         fi
         
-        page_path=$(realpath -s --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}/$upload_dir")
+        page_path=$(realpath -m -s --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}/$upload_dir")
         org=$(echo "${{ inputs.target-repository }}" | cut -d "/" -f 1)
         repo=$(echo "${{ inputs.target-repository }}" | cut -d "/" -f 2)
         if [ -z "${{ inputs.configured-domain }}" ]; then
