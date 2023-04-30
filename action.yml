@@ -27,7 +27,7 @@ inputs:
     required: false
     default: gh-pages
   target-dir:
-    description: >
+    description: |
       The directory you want to deploy in the GitHub Pages repository.
       Defaults the root directory.
     required: false
@@ -39,14 +39,14 @@ inputs:
     required: false
 
   pr-by-commit:
-    description: >
+    description: |
       Whether to keep different pages by each commit SHA or overwrite per each pull request.
       If 'true' the deploy directory for pull request will be ${{ inputs.target-dir }}/pr-${{ github.event.number }}/${{ github.sha }}.
       If 'false' the directory will be ${{ inputs.target-dir }}/pr-${{ github.event.number }} and overwrites on each commit.
     required: false
     default: 'true'
   branch-by-commit:
-    description: >
+    description: |
       Whether to keep different pages by each commit SHA or overwrite per each branch.
       If 'true' the deploy directory for pull request will be ${{ inputs.target-dir }}/${{ github.ref_name }}/${{ github.sha }}.
       If 'false' the directory will be ${{ inputs.target-dir }}/${{ github.ref_name }} and overwrites on each commit.
