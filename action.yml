@@ -8,7 +8,7 @@ branding:
 inputs:
   token:
     description: >
-      The GitHub App token or personal access token to access GitHub Pages publishing repository.
+      The GitHub App token or personal access token to access GitHub Pages publishing repository and commenting to the pull requests and branches.
       Defaults to the repository scoped GitHub token (Which means that the repository you want to deploy GitHub Pages is the same one as you are running your workflow).
     required: true
     default: ${{ github.token }}
@@ -18,7 +18,7 @@ inputs:
 
   target-repository:
     description: >
-      The repository you want to deploy GitHub Pages to, in format of 'rajyan/preview-pages'.
+      The repository you want to deploy GitHub Pages to, in the format of 'rajyan/preview-pages'.
       Defaults to the current repository you are running the workflow.
     required: false
     default: ${{ github.repository }}
@@ -37,23 +37,6 @@ inputs:
   configured-domain:
     description: The custom domain configured in GitHub Pages repository.
     required: false
-
-  pr-by-commit:
-    description: |
-      Whether to keep different pages by each commit SHA or overwrite per each pull request.
-      If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/pr-{{ github.event.number }}/{{ github.sha }}'.
-      If 'false' the directory will be '{{ inputs.target-dir }}/pr-{{ github.event.number }}' and overwrites on each commit.
-    required: false
-    default: 'true'
-  branch-by-commit:
-    description: |
-      Whether to keep different pages by each commit SHA or overwrite per each branch.
-      If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/{{ github.ref_name }}/{{ github.sha }}'.
-      If 'false' the directory will be '{{ inputs.target-dir }}/{{ github.ref_name }}' and overwrites on each commit.
-    required: false
-    default: 'false'
-
-  # configuration for other actions
   git-config-name:
     description: Username of the commit when deploying to the GitHub Pages publishing repository.
     required: false
@@ -62,7 +45,16 @@ inputs:
     description: Email of the commit when deploying to the GitHub Pages publishing repository.
     required: false
     default: 41898282+github-actions[bot]@users.noreply.github.com
-  comment:
+
+  # pull request event options
+  pr-by-commit:
+    description: |
+      Whether to keep different pages by each commit SHA or overwrite per each pull request.
+      If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/pr-{{ github.event.number }}/{{ github.sha }}'.
+      If 'false' the directory will be '{{ inputs.target-dir }}/pr-{{ github.event.number }}' and overwrites on each commit.
+    required: false
+    default: 'true'
+  pr-comment:
     description: >
       Whether to comment the preview page url in a pull request and how.
       Valid choices are 'append', 'sticky', 'recreate', 'hide_and_recreate', 'none'.
@@ -70,27 +62,53 @@ inputs:
     required: false
     default: 'append'
 
+  # push event options
+  branch-by-commit:
+    description: |
+      Whether to keep different pages by each commit SHA or overwrite per each branch.
+      If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/{{ github.ref_name }}/{{ github.sha }}'.
+      If 'false' the directory will be '{{ inputs.target-dir }}/{{ github.ref_name }}' and overwrites on each commit.
+    required: false
+    default: 'false'
+  branch-comment:
+    description: Whether to comment the preview page url on the branches commit.
+    required: false
+    default: 'true'
+
 runs:
   using: composite
   steps:
-    - name: Set short sha
-      id: short-sha
-      run: echo "sha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
-      shell: bash
+    - name: Setup parameters
+      id: params
+      run: |
+        short_sha=$(echo ${{ github.sha }} | cut -c 1-7)
+        echo "short-sha=$short_sha" >> $GITHUB_OUTPUT
+        
+        if [[ ${{ github.event_name == 'pull_request' }} ]]; then
+          echo "upload-dir=format('pr-{0}/{1}', github.event.number, $short_sha)" >> $GITHUB_OUTPUT
+        else
+          echo "upload-dir=format('{0}/{1}',  github.ref_name, $short_sha)" >> $GITHUB_OUTPUT
+        fi
+        
+        page_path=$(realpath --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}")
+        org=$(echo "${{ inputs.deploy-repository }}" | cut -d "/" -f 1)
+        repo=$(echo "${{ inputs.deploy-repository }}" | cut -d "/" -f 2)
+        if [[ -z ${{ inputs.configured-domain }} ]];
+          echo "pages-url=${org}.github.io/${repo}/${page_path}" >> $GITHUB_OUTPUT
+        else
+          echo "pages-url=${{ inputs.configured-domain }}/${page_path}" >> $GITHUB_OUTPUT
+        end
 
-    - name: Set upload directory
-      id: upload-dir
-      run: echo "dir=${{ github.event_name == 'pull_request' && format('pr-{0}/{1}', github.event.number, steps.short-sha.outputs.sha) || github.ref_name }}" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        folder: ${{ inputs.source-dir }}
         token: ${{ inputs.token }}
         repository-name: ${{ inputs.target-repository }}
         branch: ${{ inputs.target-branch }}
-        target-folder: ${{ inputs.target-dir }}
+        folder: ${{ inputs.source-dir }}
+        target-folder: ${{ inputs.target-dir }}/${{ steps.params.outputs.upload-dir }}
         git-config-name: ${{ inputs.git-config-name }}
         git-config-email: ${{ inputs.git-config-email }}
 
@@ -104,13 +122,13 @@ runs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
-              body: "[Deployed page ${{ steps.short-sha.outputs.sha }}](https://${{ inputs.pages-organization }}.github.io/${{ inputs.pages-repository }}/${{ steps.upload-dir.outputs.dir }})"
+              body: "[Deployed page ${{ steps.params.outputs.sha }}](https://${{ steps.params.outputs.pages-url }})"
             })
           } else {
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: "[Deployed page ${{ steps.short-sha.outputs.sha }}](https://${{ inputs.pages-organization }}.github.io/${{ inputs.pages-repository }}/${{ steps.upload-dir.outputs.dir }})"
+              body: "[Deployed page ${{ steps.params.outputs.sha }}](https://${{ steps.params.outputs.pages-url }})"
             })
           }
