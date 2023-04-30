@@ -125,7 +125,7 @@ runs:
       with:
         GITHUB_TOKEN: ${{ inputs.token }}
         message: |
-          [Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }}
+          Deployed ${{ steps.params.outputs.short-sha }} to <https://${{ steps.params.outputs.pages-url }}>
         append: ${{ steps.params.outputs.append || false }}
         recreate: ${{ steps.params.outputs.recreate || false }}
         hide_and_recreate: ${{ steps.params.outputs.hide_and_recreate || false }}
