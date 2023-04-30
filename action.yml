@@ -59,8 +59,9 @@ inputs:
   pr-comment:
     description: >
       Whether to comment the preview page url in a pull request and how.
-      Valid choices are 'each' 'append', 'sticky', 'recreate', 'hide_and_recreate', 'none'.
-      See https://github.com/marocchino/sticky-pull-request-comment for the options.
+      Valid choices are 'each' which posts a comment on each commit,
+      'append', 'sticky', 'recreate', 'hide_and_recreate' see https://github.com/marocchino/sticky-pull-request-comment for the options,
+      or 'none' if you don't need the comment.
     required: false
     default: 'each'
 
