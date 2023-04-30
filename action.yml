@@ -120,8 +120,6 @@ runs:
     - name: Comment preview link to pull request
       uses: marocchino/sticky-pull-request-comment@v2
       if: ${{ github.event_name == 'pull_request' && !steps.params.outputs.none }}
-      env:
-        GITHUB_TOKEN: ${{ inputs.token }}
       with:
         message: |
           "[Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
