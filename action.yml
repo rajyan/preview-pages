@@ -87,10 +87,11 @@ runs:
         echo "short-sha=$short_sha" >> $GITHUB_OUTPUT
         
         if [ ${{ github.event_name == 'pull_request' }} = true ]; then
-          upload_dir="pr-${{ github.event.number }}/$(${{ inputs.pr-by-commit }} && echo $short_sha)"
+          upload_dir="pr-${{ github.event.number }}/$(${{ inputs.pr-by-commit }} && echo $short_sha || echo '')"
         else
-          upload_dir="${{ github.ref_name }}/$(${{ inputs.branch-by-commit }} && echo $short_sha)"
+          upload_dir="${{ github.ref_name }}/$(${{ inputs.branch-by-commit }} && echo $short_sha || echo '')"
         fi
+        echo "upload-dir=$upload_dir" >> $GITHUB_OUTPUT
         
         page_path=$(realpath -m -s --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}/$upload_dir")
         org=$(echo "${{ inputs.target-repository }}" | cut -d "/" -f 1)
