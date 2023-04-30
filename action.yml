@@ -83,8 +83,7 @@ runs:
     - name: Setup parameters
       id: params
       run: |
-        short_sha=$(echo ${{ github.sha }} | cut -c 1-7)
-        echo "short-sha=$short_sha" >> $GITHUB_OUTPUT
+        echo "short-sha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
         
         if ${{ github.event_name == 'pull_request' }} ; then
           echo "upload-dir=${{ format('pr-{0}/{1}', github.event.number, steps.params.outputs.short-sha) }}" >> $GITHUB_OUTPUT
@@ -124,13 +123,13 @@ runs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
-              body: "[Deployed page ${{ steps.params.outputs.sha }}](https://${{ steps.params.outputs.pages-url }})"
+              body: "[Deployed page ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
             })
           } else {
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: "[Deployed page ${{ steps.params.outputs.sha }}](https://${{ steps.params.outputs.pages-url }})"
+              body: "[Deployed page ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
             })
           }
