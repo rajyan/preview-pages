@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  pull-requests: write
+
 jobs:
   run:
     name: Run
@@ -19,13 +22,4 @@ jobs:
 
       - uses: npalm/action-docs-action@v1.4.0
 
-      - name: Generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1.8.0
-        with:
-          app_id: ${{ secrets.RAJYAN_BOT_APP_ID }}
-          private_key: ${{ secrets.RAJYAN_BOT_PRIVATE_KEY }}
-
       - uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
