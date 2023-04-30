@@ -34,6 +34,7 @@ inputs:
   configured-dir:
     description: The directory configured in GitHub Pages repository as a source. (ex. /docs)
     required: false
+    default: /
   configured-domain:
     description: The custom domain configured in GitHub Pages repository.
     required: false
@@ -90,7 +91,7 @@ runs:
           echo "upload-dir=format('{0}/{1}',  github.ref_name, $short_sha)" >> $GITHUB_OUTPUT
         fi
         
-        page_path=$(realpath --relative-to "${{ inputs.configured-dir || / }}" "${{ inputs.target-dir }}")
+        page_path=$(realpath --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}")
         org=$(echo "${{ inputs.deploy-repository }}" | cut -d "/" -f 1)
         repo=$(echo "${{ inputs.deploy-repository }}" | cut -d "/" -f 2)
         if [[ -z "${{ inputs.configured-domain }}" ]];
