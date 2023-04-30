@@ -101,6 +101,8 @@ runs:
         else
           echo "pages-url=${{ inputs.configured-domain }}/${page_path}" >> $GITHUB_OUTPUT
         fi
+        
+        echo "${{ inputs.pr-comment }}=true" >> $GITHUB_OUTPUT
 
       shell: bash
 
@@ -115,23 +117,27 @@ runs:
         git-config-name: ${{ inputs.git-config-name }}
         git-config-email: ${{ inputs.git-config-email }}
 
-    - name: Comment preview link
+    - name: Comment preview link to pull request
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: ${{ github.event_name == 'pull_request' && !steps.params.outputs.none }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+      with:
+        message: |
+          "[Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
+        append: ${{ steps.params.outputs.append }}
+        recreate: ${{ steps.params.outputs.recreate }}
+        hide_and_recreate: ${{ steps.params.outputs.hide_and_recreate }}
+
+    - name: Comment preview link to commit
       uses: actions/github-script@v6
+      if: ${{ github.event_name == 'push' && inputs.branch-comment }}
       with:
         github-token: ${{ inputs.token }}
         script: |
-          if (context.eventName == 'push') {
-            github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-              body: "[Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
-            })
-          } else {
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: "[Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
-            })
-          }
+          github.rest.repos.createCommitComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            commit_sha: context.sha,
+            body: "[Deployed page for ${{ steps.params.outputs.short-sha }}](https://${{ steps.params.outputs.pages-url }})"
+          })
