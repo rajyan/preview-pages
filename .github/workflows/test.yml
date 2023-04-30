@@ -33,7 +33,7 @@ jobs:
           private_key: ${{ secrets.RAJYAN_BOT_PRIVATE_KEY }}
 
       - name: Preview Pages
-        uses: rajyan/preview-pages@d5429c30d6da8cfcfa993e875f513427bcc0d3b8
+        uses: rajyan/preview-pages@06b667bf7d7eb732bca755541394af0a8782a2b2
         with:
           token: ${{ steps.generate-token.outputs.token }}
           target-repository: rajyan/coverage-report
