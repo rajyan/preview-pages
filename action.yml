@@ -87,9 +87,9 @@ runs:
         echo "short-sha=$short_sha" >> $GITHUB_OUTPUT
         
         if [[ ${{ github.event_name == 'pull_request' }} ]]; then
-          echo "upload-dir=format('pr-{0}/{1}', github.event.number, $short_sha)" >> $GITHUB_OUTPUT
+          echo "upload-dir=${{ format('pr-{0}/{1}', github.event.number, $short_sha) }}" >> $GITHUB_OUTPUT
         else
-          echo "upload-dir=format('{0}/{1}',  github.ref_name, $short_sha)" >> $GITHUB_OUTPUT
+          echo "upload-dir=${{ format('{0}/{1}',  github.ref_name, $short_sha) }}" >> $GITHUB_OUTPUT
         fi
         
         page_path=$(realpath -s --relative-to "${{ inputs.configured-dir }}" "${{ inputs.target-dir }}")
