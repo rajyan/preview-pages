@@ -26,5 +26,6 @@ jobs:
           app_id: ${{ secrets.RAJYAN_BOT_APP_ID }}
           private_key: ${{ secrets.RAJYAN_BOT_PRIVATE_KEY }}
 
-      - uses:  peter-evans/create-pull-request@v5
-        token: ${{ steps.generate-token.outputs.token }}
+      - uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
