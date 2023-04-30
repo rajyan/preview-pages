@@ -80,6 +80,14 @@ inputs:
     required: false
     default: 'each'
 
+outputs:
+  pages-url:
+    description: The deployed Github Pages url
+    value: ${{ steps.params.outputs.pages-url }}
+  upload-dir:
+    description: The deployed directory under {{inputs.target-dir}}
+    value: ${{ steps.params.outputs.upload-dir }}
+
 runs:
   using: composite
   steps:
