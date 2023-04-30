@@ -31,6 +31,7 @@ inputs:
       The directory you want to deploy in the GitHub Pages repository.
       Defaults the root directory.
     required: false
+    default: /
   configured-dir:
     description: The directory configured in GitHub Pages repository as a source. (ex. /docs)
     required: false
