@@ -37,6 +37,3 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           source-dir: test
-          target-repository: rajyan/coverage-report
-          target-branch: main
-          pr-comment: append
