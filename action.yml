@@ -81,11 +81,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set short sha
-      id: short-sha
-      run: echo "sha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
-      shell: bash
-
     - name: Setup parameters
       id: params
       env:
@@ -94,8 +89,8 @@ runs:
             format(
               github.event_name == 'pull_request' && 'pr-{0}/{1}' || '{0}/{1}',
               github.event_name == 'pull_request' && github.event.number || github.ref_name,
-              (github.event_name == 'pull_request' && inputs.pr-per-commit || inputs.branch-per-commit) 
-                && steps.short-sha.outputs.sha
+              (github.event_name == 'pull_request' && inputs.pr-per-commit || inputs.branch-per-commit) == 'true'
+                && github.sha
                 || ''
             )
           }}
