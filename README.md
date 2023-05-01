@@ -2,14 +2,14 @@
 <!-- action-docs-description -->
 ## Description
 
-Action to deploy a preview GitHub Pages for each branch, pull request, commit
+Action to deploy a preview GitHub Pages for each branch, pull request, commit. This Action enables you to, for example, create previews of SPA for each branch, and generate separate coverage reports for each pull request and commit.
 <!-- action-docs-description -->
 <!-- action-docs-inputs -->
 ## Inputs
 
 | parameter | description | required | default |
 | --- | --- | --- | --- |
-| token | The GitHub App token or personal access token to access GitHub Pages publishing repository and commenting to the pull requests and branches. Defaults to the repository scoped GitHub token (Which means that the repository you want to deploy GitHub Pages is the same one as you are running your workflow).  | `true` | ${{ github.token }} |
+| token | The GitHub App token or personal access token to access GitHub Pages publishing repository and commenting to the pull requests and branches. Defaults to the repository scoped GitHub token (Which means that the repository you want to deploy GitHub Pages is the same one as you are running your workflow).  | `false` | ${{ github.token }} |
 | source-dir | Path of the directory you want to deploy. | `true` |  |
 | target-repository | The repository you want to deploy GitHub Pages to, in the format of 'rajyan/preview-pages'. Defaults to the current repository you are running the workflow.  | `false` | ${{ github.repository }} |
 | target-branch | The branch you want to deploy GitHub Pages to. | `false` | gh-pages |
