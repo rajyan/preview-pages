@@ -1,5 +1,8 @@
 name: Preview Pages
-description: Action to deploy a preview GitHub Pages for each branch, pull request, commit
+description: >
+  Action to deploy a preview GitHub Pages for each branch, pull request, commit.
+  This Action enables you to, for example, create previews of SPA for each branch,
+  and generate separate coverage reports for each pull request and commit.
 
 branding:
   icon: copy
@@ -10,7 +13,7 @@ inputs:
     description: >
       The GitHub App token or personal access token to access GitHub Pages publishing repository and commenting to the pull requests and branches.
       Defaults to the repository scoped GitHub token (Which means that the repository you want to deploy GitHub Pages is the same one as you are running your workflow).
-    required: true
+    required: false
     default: ${{ github.token }}
   source-dir:
     description: Path of the directory you want to deploy.
