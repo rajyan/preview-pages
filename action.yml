@@ -139,8 +139,8 @@ runs:
         sha: ${{ github.sha }}
         server_url: ${{ github.server_url }}
         pages_url: ${{ steps.params.outputs.pages-url }}
-        target_repository: ${{ inputs.target }}
-        target_branch: ${{ inputs.target }}
+        target_repository: ${{ inputs.target-repository }}
+        target_branch: ${{ inputs.target-branch }}
       run: |
         EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
         echo "body<<$EOF" >> $GITHUB_OUTPUT
