@@ -8,7 +8,7 @@ on:
       - main
 
 concurrency:
-  group: preview-pages-${{ github.ref }}
+  group: preview-pages-test-cross-repo-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
