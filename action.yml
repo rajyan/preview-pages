@@ -170,7 +170,7 @@ runs:
       if: ${{ github.event_name == 'pull_request' && inputs.pr-comment != 'none' && inputs.pr-comment != 'each' }}
       with:
         GITHUB_TOKEN: ${{ inputs.token }}
-        message: ${{ steps.comment.output.body }}
+        message: ${{ steps.comment.outputs.body }}
         append: ${{ inputs.pr-comment == 'append' }}
         recreate: ${{ inputs.pr-comment == 'recreate' }}
         hide_and_recreate: ${{ inputs.pr-comment == 'hide_and_recreate' }}
@@ -178,6 +178,8 @@ runs:
     - name: Comment preview link to commit
       uses: actions/github-script@v6
       if: ${{ github.event_name == 'push' && inputs.branch-comment != 'none' || github.event_name == 'pull_request' && inputs.pr-comment == 'each' }}
+      env:
+        body: ${{ steps.comment.outputs.body }}
       with:
         github-token: ${{ inputs.token }}
         script: |
@@ -186,13 +188,13 @@ runs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
-              body: "${{ steps.comment.output.body }}",
+              body: process.env.body,
             })
           } else {
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: "${{ steps.comment.output.body }}",
+              body: process.env.body,
             })
           }
