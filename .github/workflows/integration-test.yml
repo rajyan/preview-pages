@@ -1,0 +1,32 @@
+
+name: Test Commit
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: preview-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    name: Run
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Do some kind of build
+        run: |
+          mv README.md test/index.md
+
+      - name: Preview Pages
+        uses: rajyan/preview-pages@main
+        with:
+          source-dir: test

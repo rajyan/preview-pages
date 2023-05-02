@@ -22,8 +22,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Run something
-        run: "mkdir test && touch test/index.md && echo 'test2' >> test/index.md"
+      - name: Do some kind of build
+        run: |
+          mv README.md test/index.md
 
       - name: Generate token
         id: generate-token
@@ -33,7 +34,11 @@ jobs:
           private_key: ${{ secrets.RAJYAN_BOT_PRIVATE_KEY }}
 
       - name: Preview Pages
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         uses: rajyan/preview-pages@main
         with:
           token: ${{ steps.generate-token.outputs.token }}
           source-dir: test
+          target-repository: rajyan/coverage-report
+          target-branch: main
+          pr-comment: append
