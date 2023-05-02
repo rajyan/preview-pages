@@ -7,6 +7,10 @@ on:
     branches:
       - main
 
+permissions:
+  pull-requests: write
+  contents: write
+
 concurrency:
   group: preview-pages-test-${{ github.ref }}
   cancel-in-progress: true
