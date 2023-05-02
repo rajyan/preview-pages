@@ -40,6 +40,19 @@ jobs:
           source-dir: test
 ```
 
+with this default configuration, the action would generate a preview page for each commit,
+and comments the preview page url 
+
+on the pull request with pull request events
+
+example
+https://github.com/rajyan/preview-pages/pull/3#issuecomment-1530952983
+
+and on the branch commit with push events
+
+example
+https://github.com/rajyan/preview-pages/commit/df68e1415132b40181e1141e1daba89e216fb927#commitcomment-111425894
+
 ## Examples
 
 ### GitHub pages with custom domain or directories
