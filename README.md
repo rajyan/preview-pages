@@ -57,7 +57,7 @@ https://github.com/rajyan/preview-pages/commit/df68e1415132b40181e1141e1daba89e2
 
 ### GitHub pages with custom domain or directories
 
-You can set a custom domain, directory if you have a custom GitHub Pages setup.
+You can set a custom domain and directory if you have a custom GitHub Pages setup.
 For example, in the below, the workflow would deploy pages under `docs/preview-pages`
 and the pages will be hosted from `docs` with a custom domain,
 which results as a page url of `https://test.rajyan.net/preview-pages/{sub-dir}`
