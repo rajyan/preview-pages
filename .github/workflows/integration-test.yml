@@ -34,3 +34,5 @@ jobs:
         uses: rajyan/preview-pages@main
         with:
           source-dir: test
+          target-dir: docs
+          configured-dir: docs
