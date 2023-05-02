@@ -143,10 +143,10 @@ runs:
         target_branch: ${{ inputs.target }}
       run: |
         EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-        echo "body=<<$EOF" >> $GITHUB_OUTPUT
-        echo "Deployed $sha to <https://$pages_url>" >> $GITHUB_OUTPUT
-        echo "on [$target_branch in $target_repository]($server_url/$target_repository/tree/$target_branch)" >> $GITHUB_OUTPUT
-        echo "$EOF" >> $GITHUB_OUTPUT
+        echo "body=<<$EOF" >> "$GITHUB_OUTPUT"
+        echo "Deployed $sha to <https://$pages_url>" >> "$GITHUB_OUTPUT"
+        echo "on [$target_branch in $target_repository]($server_url/$target_repository/tree/$target_branch)" >> "$GITHUB_OUTPUT"
+        echo "$EOF" >> "$GITHUB_OUTPUT"
 
       shell: bash
 
