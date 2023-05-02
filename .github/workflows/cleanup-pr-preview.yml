@@ -1,0 +1,33 @@
+
+name: Clean up pr-preview
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  pull-requests: write
+  contents: write
+
+concurrency:
+  group: preview-pages-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    name: Run
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Create empty directory
+        id: empty
+        run: echo "tmpdir=$(mktemp -d) >> $GITHUB_OUTPUT
+
+      - name: Preview Pages
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        uses: rajyan/preview-pages@main
+        with:
+          source-dir: ${{ steps.empty.outputs.tmpdir }}
