@@ -9,14 +9,16 @@ branding:
   color: blue
 
 inputs:
+  source-dir:
+    description: >
+      Path of the directory you want to deploy.
+      This is the only required input.
+    required: true
   token:
     description: >
       The GitHub App token or personal access token to access GitHub Pages publishing repository and commenting to the pull requests and branches.
       Defaults to the repository scoped GitHub token (Which means that the repository you want to deploy GitHub Pages is the same one as you are running your workflow).
     default: ${{ github.token }}
-  source-dir:
-    description: Path of the directory you want to deploy.
-    required: true
 
   target-repository:
     description: >
