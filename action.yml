@@ -13,7 +13,6 @@ inputs:
     description: >
       The GitHub App token or personal access token to access GitHub Pages publishing repository and commenting to the pull requests and branches.
       Defaults to the repository scoped GitHub token (Which means that the repository you want to deploy GitHub Pages is the same one as you are running your workflow).
-    required: false
     default: ${{ github.token }}
   source-dir:
     description: Path of the directory you want to deploy.
@@ -23,33 +22,49 @@ inputs:
     description: >
       The repository you want to deploy GitHub Pages to, in the format of 'rajyan/preview-pages'.
       Defaults to the current repository you are running the workflow.
-    required: false
     default: ${{ github.repository }}
   target-branch:
     description: The branch you want to deploy GitHub Pages to.
-    required: false
     default: gh-pages
   target-dir:
     description: |
       The directory you want to deploy in the GitHub Pages repository.
       Defaults the root directory.
-    required: false
     default: /
   configured-dir:
     description: The directory configured in GitHub Pages repository as a source. (ex. /docs)
-    required: false
     default: /
   configured-domain:
     description: The custom domain configured in GitHub Pages repository.
-    required: false
+
+  # github-pages-deploy-action options
   git-config-name:
-    description: Username of the commit when deploying to the GitHub Pages publishing repository.
-    required: false
+    description: >
+      Username of the commit when deploying to the GitHub Pages publishing repository.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices
     default: github-actions[bot]
   git-config-email:
-    description: Email of the commit when deploying to the GitHub Pages publishing repository.
-    required: false
+    description: >
+      Email of the commit when deploying to the GitHub Pages publishing repository.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices.
     default: 41898282+github-actions[bot]@users.noreply.github.com
+  clean:
+    description: >
+      Whether to delete files in the destination that doesn't exist in source.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices.
+  clean-exclude:
+    description: >
+      Files or paths to exclude from clean.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices.
+  force:
+    description: >
+      Force-push on deployment. Default is false which is different from the original action.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices.
+    default: 'false'
+  tag:
+    description: >
+      Add a tag on commit.
+      See https://github.com/JamesIves/github-pages-deploy-action#optional-choices.
 
   # pull request event options
   pr-per-commit:
@@ -57,7 +72,6 @@ inputs:
       Whether to keep different pages per each commit SHA or overwrite per each pull request.
       If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/pr-{{ github.event.number }}/{{ github.sha }}'.
       If 'false' the directory will be '{{ inputs.target-dir }}/pr-{{ github.event.number }}' and overwrites on each commit.
-    required: false
     default: 'true'
   pr-comment:
     description: >
@@ -65,7 +79,6 @@ inputs:
       Valid choices are 'each' which posts a comment on each commit,
       'append', 'sticky', 'recreate', 'hide_and_recreate' see https://github.com/marocchino/sticky-pull-request-comment for the options,
       or 'none' if you don't need the comment.
-    required: false
     default: 'each'
 
   # push event options
@@ -74,13 +87,11 @@ inputs:
       Whether to keep different pages per each commit SHA or overwrite per each branch.
       If 'true' the deploy directory for pull request will be '{{ inputs.target-dir }}/{{ github.ref_name }}/{{ github.sha }}'.
       If 'false' the directory will be '{{ inputs.target-dir }}/{{ github.ref_name }}' and overwrites on each commit.
-    required: false
     default: 'true'
   branch-comment:
     description: >
       Whether to comment the preview page url on the branches commit.
       Valid options are 'each' or 'none'.
-    required: false
     default: 'each'
 
 outputs:
@@ -107,7 +118,7 @@ runs:
         config_dir: ${{ inputs.configured-dir }}
         target_dir: ${{ inputs.target-dir }}
         repo: ${{ inputs.target-repository }}
-      run: |      
+      run: |
         echo "upload-dir=$upload_dir" >> $GITHUB_OUTPUT
         page_path=$(realpath -m -s --relative-to "$config_dir" "${target_dir}/${upload_dir}")
         org=$(echo "$repo" | cut -d "/" -f 1)
@@ -130,6 +141,10 @@ runs:
         target-folder: ${{ inputs.target-dir }}/${{ steps.params.outputs.upload-dir }}
         git-config-name: ${{ inputs.git-config-name }}
         git-config-email: ${{ inputs.git-config-email }}
+        clean: ${{ inputs.clean }}
+        clean-exclude: ${{ inputs.clean-exclude }}
+        force: ${{ inputs.force }}
+        tag: ${{ inputs.tag }}
 
     - name: Comment preview link to pull request
       uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 #2.6.2
