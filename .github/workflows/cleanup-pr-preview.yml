@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Create empty directory
         id: empty
-        run: echo "tmpdir=$(mktemp -d) >> $GITHUB_OUTPUT
+        run: echo "tmpdir=$(mktemp -d)" >> $GITHUB_OUTPUT
 
       - name: Preview Pages
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
