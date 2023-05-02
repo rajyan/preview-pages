@@ -135,7 +135,6 @@ runs:
 
     - name: Setup comment body
       id: comment
-      uses: actions/github-script@v6
       env:
         sha: ${{ github.sha }}
         server_url: ${{ github.server_url }}
@@ -148,6 +147,8 @@ runs:
         echo "Deployed $sha to <https://$pages_url>" >> $GITHUB_OUTPUT
         echo "on [$target_branch in $target_repository]($server_url/$target_repository/tree/$target_branch)" >> $GITHUB_OUTPUT
         echo "$EOF" >> $GITHUB_OUTPUT
+
+      shell: bash
 
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@ba1486788b0490a235422264426c45848eac35c6 #4.4.1
