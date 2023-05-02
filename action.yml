@@ -121,7 +121,7 @@ runs:
       shell: bash
 
     - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@v4
+      uses: JamesIves/github-pages-deploy-action@ba1486788b0490a235422264426c45848eac35c6 #4.4.1
       with:
         token: ${{ inputs.token }}
         repository-name: ${{ inputs.target-repository }}
@@ -132,7 +132,7 @@ runs:
         git-config-email: ${{ inputs.git-config-email }}
 
     - name: Comment preview link to pull request
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 #2.6.2
       if: ${{ github.event_name == 'pull_request' && inputs.pr-comment != 'none' && inputs.pr-comment != 'each' }}
       with:
         GITHUB_TOKEN: ${{ inputs.token }}
