@@ -29,3 +29,13 @@ jobs:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
+
+      - name: Update major version tag
+        env:
+          new_version: ${{ steps.tag_version.outputs.new_tag }}
+        run: |
+          major_version=$(echo "$new_version" | cut -d '.' -f 1)
+          git config user.name actions-bot
+          git config user.email actions-bot@users.noreply.github.com
+          git tag -f $major_version $new_version
+          git push origin $major_version --force
