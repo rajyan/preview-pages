@@ -30,8 +30,7 @@ jobs:
           major_version=$(echo "$new_version" | cut -d '.' -f 1)
           git config user.name actions-bot
           git config user.email actions-bot@users.noreply.github.com
-          git pull origin $new_version
-          git tag -f $major_version $new_version
+          git tag -f $major_version $GITHUB_SHA
           git push origin $major_version --force
 
       - name: Create a GitHub release
