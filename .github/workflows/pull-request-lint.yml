@@ -1,5 +1,4 @@
-
-name: pull-request-lint
+name: Pull request lint
 
 on:
   pull_request_target:
