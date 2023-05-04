@@ -99,7 +99,37 @@ because it can set permissions with finer granularity and are scoped to only rep
 ### Cleaning up pull request previews
 
 Set up a workflow on pull_request closed event to delete the pull request previews if you want.
-https://github.com/rajyan/preview-pages/blob/d99bc0116bc9d67b9aeb1fefd4f2b24f725c1eee/.github/workflows/cleanup-pr-preview.yml#L25-L37
+```yaml
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  pull-requests: write
+  contents: write
+
+concurrency:
+  group: preview-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  clean-up:
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+
+      - name: Clean up
+        run: |
+          rm -rf pr-${{ github.event.number }}
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .
+          git commit -m "Clean preview for pr-${{ github.event.number }}"
+          git push
+```
 
 <!-- action-docs-inputs -->
 ## Inputs
