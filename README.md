@@ -2,8 +2,10 @@
 <!-- action-docs-description -->
 ## Description
 
-Action to deploy a preview GitHub Pages for each branch, pull request, commit. This Action enables you to, for example, create previews of SPA for each branch, and generate separate coverage reports for each pull request and commit.
+Action to deploy a preview GitHub Pages for each branch, pull request, commit.
 <!-- action-docs-description -->
+This Action enables you to, create previews of static assets for each branch,
+and generate separate coverage reports for each pull request and commit.
 
 ## Usage
 
