@@ -11,6 +11,8 @@ and generate separate coverage reports for each pull request and commit.
 
 ```yaml
 # pull_request and push event is supported.
+# This action also works for pull_request_target event, but should not be used in public repositories.
+# Please read https://securitylab.github.com/research/github-actions-preventing-pwn-requests/ before using this action with pull_request_target event.
 on:
   pull_request:
   push:
@@ -43,17 +45,9 @@ jobs:
 ```
 
 with this default configuration, the action would generate a preview page for each commit,
-and comments the preview page url 
-
-on the pull request with pull request events
-
-example
-https://github.com/rajyan/preview-pages/pull/3#issuecomment-1530952983
-
-and on the branch commit with push events
-
-example
-https://github.com/rajyan/preview-pages/commit/df68e1415132b40181e1141e1daba89e216fb927#commitcomment-111425894
+and comments the preview page url
+[on a pull request](https://github.com/rajyan/preview-pages/pull/3#issuecomment-1530952983) with pull request events
+and [on the branch commit](https://github.com/rajyan/preview-pages/commit/df68e1415132b40181e1141e1daba89e216fb927#commitcomment-111425894) with push events.
 
 ## Examples
 
