@@ -1,6 +1,7 @@
 name: Integration test
 
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -15,6 +16,7 @@ concurrency:
 
 jobs:
   integration-test:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -26,6 +28,6 @@ jobs:
         run: mkdir test && mv README.md test/index.md
 
       - name: Preview Pages
-        uses: rajyan/preview-pages@main
+        uses: ./
         with:
           source-dir: test
