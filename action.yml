@@ -181,7 +181,10 @@ runs:
       uses: actions/github-script@v6
       if: >
         steps.deploy.outputs.deployment-status == 'success'
-        && inputs.pr-comment == 'each'
+        && (
+          github.event_name == 'push' && inputs.branch-comment == 'each'
+          || startsWith(github.event_name, 'pull_request') && inputs.pr-comment == 'each'
+        )
       env:
         body: ${{ steps.comment.outputs.body }}
       with:
