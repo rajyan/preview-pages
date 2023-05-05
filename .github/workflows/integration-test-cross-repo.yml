@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   cross-repo-integration-test:
-    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -31,7 +31,7 @@ jobs:
           private_key: ${{ secrets.RAJYAN_BOT_PRIVATE_KEY }}
 
       - name: Preview Pages
-        uses: rajyan/preview-pages@main
+        uses: ./
         with:
           token: ${{ steps.generate-token.outputs.token }}
           source-dir: test
