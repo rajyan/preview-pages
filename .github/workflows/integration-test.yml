@@ -1,6 +1,7 @@
 name: Integration test
 
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -15,6 +16,7 @@ concurrency:
 
 jobs:
   integration-test:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
