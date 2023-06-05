@@ -121,8 +121,10 @@ jobs:
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add .
-          git commit -m "Clean preview for pr-${{ github.event.number }}"
-          git push
+          if ! git diff --cached --quiet; then
+            git commit -m "Clean preview for pr-${{ github.event.number }}"
+            git push
+          fi
 ```
 
 <!-- action-docs-inputs -->
