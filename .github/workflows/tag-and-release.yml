@@ -34,7 +34,7 @@ jobs:
           git push origin $major_version --force
 
       - name: Create a GitHub release
-        uses: ncipollo/release-action@c13ca79f19cd726a0fb2945842ae681d3cb9bd25 #v1.12.0
+        uses: ncipollo/release-action@a2e71bdd4e7dab70ca26a852f29600c98b33153e #v1.12.0
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
