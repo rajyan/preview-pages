@@ -105,7 +105,6 @@ permissions:
 
 concurrency:
   group: preview-pages-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   clean-up:
