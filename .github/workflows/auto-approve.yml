@@ -17,4 +17,4 @@ jobs:
 
     if: contains(github.event.pull_request.labels.*.name, 'auto-approve') && (github.event.pull_request.user.login == 'rajyan')
     steps:
-      - uses: hmarr/auto-approve-action@44888193675f29a83e04faf4002fa8c0b537b1e4 #v3.2.1
+      - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 #v4.0.0
