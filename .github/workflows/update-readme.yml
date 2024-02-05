@@ -19,6 +19,6 @@ jobs:
 
       - uses: npalm/action-docs-action@b62a69e27ae389aa92b450f647d37409b9277bf0 #1.4.0
 
-      - uses: peter-evans/create-pull-request@153407881ec5c347639a548ade7d8ad1d6740e38 #5.0.2
+      - uses: peter-evans/create-pull-request@b1ddad2c994a25fbc81a28b3ec0e368bb2021c50 #6.0.0
         with:
           title: 'docs: auto update README'
