@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: npalm/action-docs-action@b62a69e27ae389aa92b450f647d37409b9277bf0 #1.4.0
+      - uses: npalm/action-docs-action@9fa96f2c32b29363abe935e2c3d4ee27bc84dce1 #2.0.0
 
       - uses: peter-evans/create-pull-request@153407881ec5c347639a548ade7d8ad1d6740e38 #5.0.2
         with:
