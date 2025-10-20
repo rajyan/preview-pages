@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: npalm/action-docs-action@b1dd20339140224c1ffef389467e4fece8dc416b #3.1.2
 
