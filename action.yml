@@ -149,7 +149,7 @@ runs:
 
     - name: Deploy
       id: deploy
-      uses: JamesIves/github-pages-deploy-action@5c6e9e9f3672ce8fd37b9856193d2a537941e66c #4.6.1
+      uses: JamesIves/github-pages-deploy-action@6c2d9db40f9296374acc17b90404b6e8864128c8 #4.7.3
       with:
         token: ${{ inputs.token }}
         repository-name: ${{ inputs.target-repository }}
